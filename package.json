@@ -7,7 +7,8 @@
   "type": "module",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js",
+    "build": "npm run mv",
+    "start": "npm run mv;  cd ..; node app.js",
     "mv": "set +e; mv * ../ && mv .* ..; mv ../public/* .; rm -d ../public; set -e"
   },
   "dependencies": {
