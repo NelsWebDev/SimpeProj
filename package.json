@@ -7,8 +7,7 @@
   "type": "module",
   "main": "app.js",
   "scripts": {
-    "build": "npm run mv",
-    "start": "noed app.js"
+    "start": "node app.js"
   },
   "dependencies": {
     "@types/express": "^5.0.6",
