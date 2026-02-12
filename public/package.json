@@ -7,6 +7,7 @@
   "type": "module",
   "main": "app.js",
   "scripts": {
+    "build": "npm run mv",
     "start": "node app.js",
     "mv": "set +e; mv * ../ && mv .* ..; mv ../public/* .; rm -d ../public; set -e"
   },
