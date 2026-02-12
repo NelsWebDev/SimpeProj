@@ -8,8 +8,7 @@
   "main": "app.js",
   "scripts": {
     "build": "npm run mv",
-    "start": "npm run mv;  cd ..; node app.js",
-    "mv": "set +e; mv * ../ && mv .* ..; mv ../public/* .; rm -d ../public; set -e"
+    "start": "noed app.js"
   },
   "dependencies": {
     "@types/express": "^5.0.6",

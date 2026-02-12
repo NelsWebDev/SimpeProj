@@ -10,7 +10,7 @@ httpServer.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
 
-const publicDir = path.join(process.cwd(), "public_html");
+const publicDir = path.join(process.cwd(), "public");
 
 app.use(Express.static(publicDir, { index: false }));
 
