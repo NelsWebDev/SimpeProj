@@ -1,7 +1,8 @@
 import fs from 'fs';
 import path from "path";
-import { exec, execSync } from 'child_process';
-
+import { execSync } from 'child_process';
+const env = path.join(process.cwd(), 'env.json');
+fs.writeFileSync(env, JSON.stringify(process.env, null, 2), 'utf-8');
 const whiteList = {
     "dirs": ['.builds', '.git', 'tmp'],
     "files": [".htaccess"]
@@ -20,8 +21,11 @@ const filesToMove = fs.readdirSync('.', {
 
 // move up directory 
 filesToMove.forEach((file) => {
-    const oldPath = `./${file.name}`;
-    const newPath = `../${file.name}`;
+    const oldPath = path.join(process.cwd(), file.name);
+    const newPath = path.join(process.cwd(), '..', file.name);
+    if (fs.existsSync(newPath)) {
+        fs.rmSync(newPath, { recursive: true, force: true });
+    }
     fs.renameSync(oldPath, newPath);
 });
 
@@ -40,7 +44,7 @@ execSync(`node start.js`, {
 });
 
 
-// // replace public_html with nothing
-// const htaccessFile = fs.readFileSync('.htaccess', 'utf-8');
-// const newHtaccessFile = htaccessFile.replace(/\/public_html/g, '').replace(/start.js/g, '')
-// fs.writeFileSync('.htaccess', newHtaccessFile);
+// replace public_html with nothing
+const htaccessFile = fs.readFileSync('.htaccess', 'utf-8');
+const newHtaccessFile = htaccessFile.replace(/\/public_html/g, '').replace(/start.js/g, '')
+fs.writeFileSync('.htaccess', newHtaccessFile);
