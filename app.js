@@ -10,9 +10,9 @@ httpServer.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
 
-const publicDir = path.join(process.cwd(), 'public');
+const publicDir = path.join(process.cwd(), "public");
 
-app.use(Express.static(publicDir));
+app.use(Express.static(publicDir, { index: false }));
 
 const apiRouter = Express.Router();
 apiRouter.get('/hello', (req, res) => {
@@ -26,6 +26,9 @@ apiRouter.get("/:path", (req, res) => {
 app.use('/api', apiRouter);
 
 
+app.get("/", (req, res) => {
+    res.sendFile(path.join(publicDir, 'index.html'));
+});
 app.get("/:path", (req, res) => {
     res.sendFile(path.join(publicDir, 'index.html'));
 });
