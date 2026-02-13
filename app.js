@@ -1,50 +1,34 @@
-import fs from 'fs';
-import path from "path";
-import { execSync } from 'child_process';
-const env = path.join(process.cwd(), 'env.json');
-fs.writeFileSync(env, JSON.stringify(process.env, null, 2), 'utf-8');
-const whiteList = {
-    "dirs": ['.builds', '.git', 'tmp'],
-    "files": [".htaccess"]
-}
+import Express from 'express';
+import { createServer } from 'node:http';
+import path from 'node:path';
+const app = Express();
 
-// move all files from this directory to the parent directory
-const filesToMove = fs.readdirSync('.', {
-    encoding: 'utf-8', 
-    withFileTypes: true,
-}).filter((file) => {
-    if (file.isDirectory()) {
-        return !whiteList.dirs.includes(file.name);
-    }
-    return !whiteList.files.includes(file.name);
+const httpServer = createServer(app);
+const PORT = Number(process.env.PORT || 3000);
+
+httpServer.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
 });
 
-// move up directory 
-filesToMove.forEach((file) => {
-    const oldPath = path.join(process.cwd(), file.name);
-    const newPath = path.join(process.cwd(), '..', file.name);
-    if (fs.existsSync(newPath)) {
-        fs.rmSync(newPath, { recursive: true, force: true });
-    }
-    fs.renameSync(oldPath, newPath);
+const publicDir = path.join(process.cwd(), "public");
+
+app.use(Express.static(publicDir, { index: false }));
+
+const apiRouter = Express.Router();
+apiRouter.get('/hello', (req, res) => {
+    res.json({ message: 'Hello, World!' });
 });
-
-const htaccessPath = path.join(process.cwd(), '.htaccess');
-if (fs.existsSync(htaccessPath)) {
-    const htaccessFile = fs.readFileSync(htaccessPath, 'utf-8');
-    const newHtaccessFile = htaccessFile.replace("/public_html", "").replace("app.js", "start.js");
-    fs.writeFileSync(htaccessPath, newHtaccessFile);
-}
-
-console.log("DONE moving files");
-
-execSync(`node start.js`, {
-    stdio: 'inherit',
-    cwd: path.join(process.cwd(), '../')
+apiRouter.get("/:path", (req, res) => {
+    res.status(404).json({ error: "API entrypoint not found" });
 });
 
 
-// replace public_html with nothing
-const htaccessFile = fs.readFileSync('.htaccess', 'utf-8');
-const newHtaccessFile = htaccessFile.replace(/\/public_html/g, '').replace(/start.js/g, '')
-fs.writeFileSync('.htaccess', newHtaccessFile);
+app.use('/api', apiRouter);
+
+
+app.get("/", (req, res) => {
+    res.sendFile(path.join(publicDir, 'index.html'));
+});
+app.get("/:path", (req, res) => {
+    res.sendFile(path.join(publicDir, 'index.html'));
+});
