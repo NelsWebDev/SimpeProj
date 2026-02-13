@@ -12,7 +12,7 @@ httpServer.listen(PORT, () => {
 
 const publicDir = path.join(process.cwd(), "public");
 
-app.use(Express.static(publicDir, { index: false }));
+app.use(Express.static(publicDir));
 
 const apiRouter = Express.Router();
 apiRouter.get('/hello', (req, res) => {
