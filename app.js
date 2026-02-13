@@ -10,7 +10,7 @@ const whiteList = {
 
 // move all files from this directory to the parent directory
 const filesToMove = fs.readdirSync('.', {
-    encoding: 'utf-8',
+    encoding: 'utf-8', 
     withFileTypes: true,
 }).filter((file) => {
     if (file.isDirectory()) {
